@@ -8,7 +8,7 @@ This repository contains my implementations of various data structures in **Java
 
 - Javadoc-style comments for easier understanding
 
-- Manual test cases in main methods
+- Includes thorough JUnit testing for each data structure.
 
 - Object-Oriented approach with generics
 
