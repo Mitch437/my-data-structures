@@ -1,532 +1,265 @@
-/**
- * Class used to test the 'MyLinkedList' class.
- *
- * @author Mitchell Lord.
- */
+package LinkedList;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.Iterator;
+
 public class MyLinkedListTests {
-    /**
-     * Main method used to run various tests on the MyLinkedList class.
-     * @param args command line arguments, not used in this program.
-     */
-    public static void main(String[] args) {
-        testAppend();
-        System.out.println("===================================================================\n");
+    private MyLinkedList<Integer> list;
 
-        testRemove();
-        System.out.println("===================================================================\n");
-
-        testAddToFront();
-        System.out.println("===================================================================\n");
-
-        testInsertAt();
-        System.out.println("===================================================================\n");
-
-        testRemoveFrom();
-        System.out.println("===================================================================\n");
-
-        testGet();
-        System.out.println("===================================================================\n");
-
-        testContains();
-        System.out.println("===================================================================\n");
-
-        testIndexOf();
-        System.out.println("===================================================================\n");
-
-        testReverse();
-        System.out.println("===================================================================\n");
-
-        testClear();
-        System.out.println("===================================================================\n");
-
-        testIsEmpty();
-        System.out.println("===================================================================\n");
-
-        testSize();
-        System.out.println("===================================================================\n");
-
-        testIterator();
-        System.out.println("===================================================================\n");
+    @BeforeEach
+    void setup() {
+        list = new MyLinkedList<>();
     }
 
+    @Test
+    void testGet() {
+        list.append(10);
+        list.append(20);
+        list.append(30);
 
-    /**
-     * Tests the append method of the MyLinkedList class.
-     * Append adds an element to the end of the list.
-     */
-    public static void testAppend() {
-        System.out.println("Append:\n");
+        assertThrows(IndexOutOfBoundsException.class, () -> {
+            list.get(-1); // Verify the program correctly throws an exception when trying to get an item from an invalid index.
+        });
 
-        // Description of test.
-        System.out.println("Test: add elements to the end of the list\n");
+        assertThrows(IndexOutOfBoundsException.class, () -> {
+            list.get(1000); // Verify the program correctly throws an exception when trying to get an item from an invalid index.
+        });
 
-        // Linked list of integers.
-        MyLinkedList<Integer> list = new MyLinkedList<>();
+        Iterator<Integer> iter = list.iterator();
+        for (int i = 0; i < list.size(); i++) {
+            assertEquals(iter.next(), list.get(i)); // Verify that get matches iterator.
+        }
+    }
 
-        // What the list looks like before the test.
-        System.out.println("Before test:");
-        System.out.println(list.toString() + "\n");
+    @Test
+    void testAddToFront() {
+        list.addToFront(1);
 
-        // Add data to the end of the linked list.
+        assertEquals(1, list.get(0));
+
+        list.addToFront(2);
+
+        assertEquals(2, list.get(0));
+        assertEquals(2, list.size()); // Verify the size updates.
+    }
+
+    @Test
+    void testAppend() {
+        // Populate the list.
+        list.append(10);
+        list.append(20);
+
+        assertEquals(10, list.get(0));
+        assertEquals(20, list.get(1));
+    }
+
+    @Test
+    void testInsertAt() {
+        // Populate the list.
+        list.append(10); // Index 0.
+        list.append(20); // Index 1.
+        list.append(30); // Index 2.
+
+        assertThrows(IndexOutOfBoundsException.class, () -> {
+            list.insertAt(-1, 0); // Verify the program correctly throws an exception when trying to insert at an invalid index.
+        });
+
+        assertThrows(IndexOutOfBoundsException.class, () -> {
+            list.insertAt(1000, 0); // Verify the program correctly throws an exception when trying to insert at an invalid index.
+        });
+
+        list.insertAt(1, 15); // Middle.
+        assertEquals(10, list.get(0));
+        assertEquals(15, list.get(1));
+        assertEquals(20, list.get(2));
+        assertEquals(30, list.get(3));
+
+        list.insertAt(0, 5); //Beginning.
+        assertEquals(5, list.get(0));
+
+        list.insertAt(list.size(), 35); // End.
+        assertEquals(35, list.get(list.size() - 1));
+
+        assertEquals(6, list.size()); // List should now contain 6 elements.
+    }
+
+    @Test
+    void testRemove() {
         list.append(1);
         list.append(2);
         list.append(3);
 
-        String expected = "1 -> 2 -> 3"; // What the output should be.
-        String actual = list.toString(); // What the output is.
+        assertTrue(list.contains(2)); // Verify 2 was added.
 
-        // Displays the output and checks if the list passed the test.
-        printResults(expected, actual);
+        assertTrue(list.remove(2)); // Verify remove returns true when removing existing element.
+
+        assertFalse(list.contains(2)); // Verify 2 was removed.
+
+        assertFalse(list.remove(555)); // Verify remove returns false for elements not in the list.
+
+        assertTrue(list.contains(1)); // Verify 1 is still present.
+
+        assertTrue(list.remove(1)); // Remove 1 and verify return true.
+
+        assertFalse(list.contains(1)); // Verify 1 was removed.
+
+        assertEquals(1, list.size()); // Verify only one element remains.
+
+        assertTrue(list.contains(3)); // Verify 3 was unaffected.
     }
 
-
-    /**
-     * Tests the remove method of the MyLinkedList class.
-     * Remove deletes an element of the list given its value.
-     */
-    public static void testRemove() {
-        System.out.println("Remove:\n");
-
-        // Description of test.
-        System.out.println("Test: remove 2.1 from the list\n");
-
-        // Linked list of doubles.
-        MyLinkedList<Double> list = new MyLinkedList<>();
+    @Test
+    void testRemoveFirst() {
+        assertThrows(java.util.NoSuchElementException.class, () -> {
+            list.removeFirst(); // Verify the program correctly throws an exception when trying to remove from an empty list.
+        });
 
         // Populate the list.
-        list.append(1.1);
-        list.append(2.1);
-        list.append(3.1);
-
-        // What the list looks like before the test.
-        System.out.println("Before test:");
-        System.out.println(list.toString() + "\n");
-
-        // Remove element.
-        list.remove(2.1);
-
-        String expected = "1.1 -> 3.1"; // What the output should be.
-        String actual = list.toString(); // What the output is.
-
-        // Displays the output and checks if the list passed the test.
-        printResults(expected, actual);
-    }
-
-
-    /**
-     * Tests the addToFront method of the MyLinkedList class.
-     * addToFront adds a given element to the front of the list.
-     */
-    public static void testAddToFront() {
-        System.out.println("Add to front:\n");
-
-        // Description of test.
-        System.out.println("Test: add 'a' to the front of the list\n");
-
-        // Linked list of characters.
-        MyLinkedList<Character> list = new MyLinkedList<>();
-
-        // Populate the list.
-        list.append('b');
-        list.append('c');
-        list.append('d');
-
-        // What the list looks like before the test.
-        System.out.println("Before test:");
-        System.out.println(list.toString() + "\n");
-
-        // Test adding element to the front of the list.
-        list.addToFront('a');
-
-        String expected = "a -> b -> c -> d"; // What the output should be.
-        String actual = list.toString(); // What the output is.
-
-        // Displays the output and checks if the list passed the test.
-        printResults(expected, actual);
-    }
-
-
-    /**
-     * Tests the insertAt method of the MyLinkedList class.
-     * insertAt inserts a given element at a given index in the list.
-     */
-    public static void testInsertAt() {
-        System.out.println("Insert:\n");
-
-        // Description of test.
-        System.out.println("Test: insert 'my' at index 1\n");
-
-        // Linked list of strings.
-        MyLinkedList<String> list = new MyLinkedList<>();
-
-        // Populate the list.
-        list.append("hi");
-        list.append("name");
-        list.append("is");
-        list.append("Mitch");
-
-        // What the list looks like before the test.
-        System.out.println("Before test:");
-        System.out.println(list.toString() + "\n");
-
-        // Test inserting an element at index 1.
-        list.insertAt(1, "my");
-
-        String expected = "hi -> my -> name -> is -> Mitch"; // What the output should be.
-        String actual = list.toString(); // What the output is.
-
-        // Displays the output and checks if the list passed the test.
-        printResults(expected, actual);
-    }
-
-
-    /**
-     * Tests the removeFrom method of the MyLinkedList class.
-     * removeFrom removes an element from a given index in the list.
-     */
-    public static void testRemoveFrom() {
-        System.out.println("Remove from index:\n");
-
-        // Description of test.
-        System.out.println("Test: remove element from index 3\n");
-
-        MyLinkedList<Integer> list = new MyLinkedList<>();
-
-        // Populate the list.
-        list.append(5);
         list.append(10);
-        list.append(15);
-        list.append(17);
         list.append(20);
+        list.append(30);
 
-        // What the list looks like before the test.
-        System.out.println("Before test:");
-        System.out.println(list.toString() + "\n");
-
-        // Test removing an element from index 3.
-        list.removeFrom(3);
-
-        String expected = "5 -> 10 -> 15 -> 20"; // What the output should be.
-        String actual = list.toString(); // What the output is.
-
-        // Displays the output and checks if the list passed the test.
-        printResults(expected, actual);
+        assertEquals(10, list.removeFirst());
+        assertEquals(2, list.size());
+        assertEquals(20, list.get(0));
     }
 
-
-    /**
-     * Tests the get method of the MyLinkedList class.
-     * get retrieves an element of the list from a given index.
-     */
-    public static void testGet() {
-        System.out.println("Get:\n");
-
-        // Description of the test.
-        System.out.println("Test: Get element at index 2\n");
-
-        MyLinkedList<Double> list = new MyLinkedList<>();
-
+    @Test
+    void testRemoveFrom() {
         // Populate the list.
-        list.append(0.0);
-        list.append(1.2);
-        list.append(3.14);
-        list.append(14.562);
+        list.append(100);
+        list.append(200);
+        list.append(300);
 
-        // What the list looks like before the test.
-        System.out.println("Before test:");
-        System.out.println(list.toString() + "\n");
+        list.removeFrom(0);
+        list.removeFrom(1);
 
-        double expected = 3.14; // What the output should be.
-        double actual = list.get(2); // What the output is.
+        assertFalse(list.contains(100));
+        assertFalse(list.contains(300));
 
-        // Displays the output and checks if the list passed the test.
-        printResults(expected, actual);
+        assertEquals(1, list.size());
+
+        assertTrue(list.contains(200));
+
+        assertThrows(IndexOutOfBoundsException.class, () -> {
+            list.removeFrom(-1); // Verify the program correctly throws an exception when trying to remove from an invalid index.
+        });
+
+        assertThrows(IndexOutOfBoundsException.class, () -> {
+            list.removeFrom(1000); // Verify the program correctly throws an exception when trying to remove from an invalid index.
+        });
     }
 
-
-    /**
-     * Tests the contains method of the MyLinkedList class.
-     * contains determines if the given element is in the list or not.
-     */
-    public static void testContains() {
-        System.out.println("Contains:\n");
-
-        MyLinkedList<String> list = new MyLinkedList<>();
-
-        // Populate the list.
-        list.append("foo");
-        list.append("bar");
-
-        // What the list looks like before the test.
-        System.out.println("Before test:");
-        System.out.println(list.toString() + "\n");
-
-        // Description of the first test.
-        System.out.println("Test 1: contains 'bar'?\n");
-
-        boolean expected = true; // What the output should be.
-        boolean actual = list.contains("bar"); // What the output is.
-
-        // Displays the output and checks if the list passed the test.
-        printResults(expected, actual);
-
-        // Description of the second test.
-        System.out.println("Test 2: contains 'car'?\n");
-
-        expected = false;
-        actual = list.contains("car");
-
-        printResults(expected, actual);
-    }
-
-
-    /**
-     * Tests the indexOf method of the MyLinkedList class.
-     * indexOf returns the index of the given element in the list.
-     */
-    public static void testIndexOf() {
-        System.out.println("Index of:\n");
-
-        MyLinkedList<Integer> list = new MyLinkedList<>();
-
-        // Populate the list.
-        list.append(3);
-        list.append(6);
-        list.append(9);
-        list.append(12);
-
-        // What the list looks like before the test.
-        System.out.println("Before test:");
-        System.out.println(list.toString() + "\n");
-
-        System.out.println("Test 1: index of '9'?\n");
-
-        int expected = 2; // What the output should be.
-        int actual = list.indexOf(9); // What the output is.
-
-        printResults(expected, actual);
-
-        System.out.println("Test 2: index of '15'?\n");
-
-        expected = -1;
-        actual = list.indexOf(15);
-
-        // Displays the output and checks if the list passed the test.
-        printResults(expected, actual);
-    }
-
-
-    /**
-     * Tests the reverse method of the MyLinkedList class.
-     * reverse reverses the order of the elements in the list.
-     */
-    public static void testReverse() {
-        System.out.println("Reverse:\n");
-
-        // Description of test.
-        System.out.println("Test: reverse the order of the elements in the list\n");
-
-        MyLinkedList<Integer> list = new MyLinkedList<>();
+    @Test
+    void testContains() {
+        assertFalse(list.contains(0)); // Verify that contains works on an empty list.
+        assertFalse(list.contains(null));
 
         // Populate the list.
         list.append(100);
         list.append(200);
         list.append(300);
-        list.append(400);
-        list.append(500);
 
-        // What the list looks like before the test.
-        System.out.println("Before test:");
-        System.out.println(list.toString() + "\n");
+        assertTrue(list.contains(100));
+        assertTrue(list.contains(200));
+        assertTrue(list.contains(300));
+        assertFalse(list.contains(555)); // Verify that contains returns false when given a value that isn't in the list.
+    }
 
+    @Test
+    void testIndexOf() {
+        // Verify that indexOf returns -1 on an empty list.
+        assertEquals(-1, list.indexOf(10));
+
+        // Populate the list.
+        list.append(10);
+        list.append(20);
+        list.append(30);
+
+        assertEquals(0, list.indexOf(10));
+        assertEquals(1, list.indexOf(20));
+        assertEquals(2, list.indexOf(30));
+        assertEquals(-1, list.indexOf(999)); // Not in list.
+    }
+
+    @Test
+    void testPeekFirst() {
+        // Peek first on empty list should throw NoSuchElementException.
+        assertThrows(java.util.NoSuchElementException.class, () -> list.peekFirst());
+
+        // Populate the list.
+        list.append(5);
+        list.append(15);
+
+        assertEquals(5, list.peekFirst());
+        assertEquals(5, list.peekFirst()); // Verify element was not removed.
+    }
+
+    @Test
+    void testReverse() {
+        // Reversing empty list should do nothing.
+        list.reverse();
+        assertTrue(list.isEmpty());
+
+        // Populate and reverse list.
+        list.append(1);
+        list.append(2);
+        list.append(3);
         list.reverse();
 
-        String expected = "500 -> 400 -> 300 -> 200 -> 100"; // What the output should be.
-        String actual = list.toString(); // What the output is.
+        // Now first element should be 3.
+        assertEquals(3, list.peekFirst());
 
-        // Displays the output and checks if the list passed the test.
-        printResults(expected, actual);
+        // The order should be reversed: 3 -> 2 -> 1.
+        assertEquals(3, list.get(0));
+        assertEquals(2, list.get(1));
+        assertEquals(1, list.get(2));
     }
 
-
-    /**
-     * Tests the clear method of the MyLinkedList class.
-     * clear deletes all elements of the list.
-     */
-    public static void testClear() {
-        System.out.println("Clear:\n");
-
-        // Description of test.
-        System.out.println("Test: remove all elements from the list\n");
-
-        MyLinkedList<String> list = new MyLinkedList<>();
-
+    @Test
+    void testClear() {
         // Populate the list.
-        list.append("a");
-        list.append("b");
-        list.append("c");
+        list.append(1);
+        list.append(2);
+        list.append(3);
 
-        // What the list looks like before the test.
-        System.out.println("Before test:");
-        System.out.println(list.toString() + "\n");
-
-        // Clear the list.
         list.clear();
 
-        String expected = "List is empty"; // What the output should be.
-        String actual = list.toString(); // What the output is.
-
-        // Displays the output and checks if the list passed the test.
-        printResults(expected, actual);
+        assertTrue(list.isEmpty());  // List should be empty after clear.
+        assertThrows(java.util.NoSuchElementException.class, () -> list.peekFirst()); // peekFirst should throw exception on empty list.
     }
 
-
-    /**
-     * Tests the isEmpty method of the MyLinkedList class.
-     * isEmpty determines if the list contains any elements.
-     */
-    public static void testIsEmpty() {
-        System.out.println("IsEmpty:\n");
-
-        MyLinkedList<Integer> list = new MyLinkedList<>();
-
-        System.out.println("Test 1: before adding any elements\n");
-
-        boolean expected = true; // What the output should be.
-        boolean actual = list.isEmpty(); // What the output is.
-
-        // Displays the output and checks if the list passed the test.
-        printResults(expected, actual);
-
-        // Add an element to make it non-empty
-        list.append(42);
-
-        System.out.println("Test 2: After adding an element\n");
-
-        // What the list looks like before test 2.
-        System.out.println("Before test:");
-        System.out.println(list.toString() + "\n");
-
-        expected = false;
-        actual = list.isEmpty();
-
-        printResults(expected, actual);
-
-        // Clear the list again
-        list.clear();
-
-        System.out.println("Test 3: After clearing the list\n");
-
-        expected = true;
-        actual = list.isEmpty();
-
-        printResults(expected, actual);
-    }
-
-
-    /**
-     * Tests the size method of the MyLinkedList class.
-     * size returns the number of elements in the list.
-     */
-    public static void testSize() {
-        System.out.println("Size:\n");
-
-        MyLinkedList<Double> list = new MyLinkedList<>();
-
-        // Description of test 1.
-        System.out.println("Test 1: before adding any elements\n");
-
-        // Initially empty
-        int expected = 0; // What the output should be.
-        int actual = list.size(); // What the output is.
-
-        // Displays the output and checks if the list passed the test.
-        printResults(expected, actual);
-
-        // Description of test 2.
-        System.out.println("Test 2: after adding two elements\n");
-
-        list.append(43.7654);
-        list.append(123.3333);
-
-        expected = 2;
-        actual = list.size();
-        printResults(expected, actual);
-    }
-
-
-    /**
-     * Tests the implementation of iterable interface.
-     * iterator enables the use of an enhanced for loop over the list.
-     */
-    public static void testIterator() {
-        System.out.println("Iterator:\n");
-
-        // Description of test.
-        System.out.println("Test: iterate over and print list using enhanced for loop\n");
-
-        MyLinkedList<Character> list = new MyLinkedList<>();
+    @Test
+    void testIsEmpty() {
+        assertTrue(list.isEmpty()); // List is initially empty.
 
         // Populate the list.
-        list.append('X');
-        list.append('Y');
-        list.append('Z');
+        list.append(1);
 
-        StringBuilder actual = new StringBuilder(); // What the output is.
-        for (char c : list) {
-            actual.append(c);
-            actual.append(" ");
-        }
+        assertFalse(list.isEmpty());
 
-        String expected = "X Y Z "; // What the output should be.
-
-        // Displays the output and checks if the list passed the test.
-        printResults(expected.trim(), actual.toString().trim());
+        list.clear();
+        assertTrue(list.isEmpty()); // Empty again after clear.
     }
 
+    @Test
+    void testSize() {
+        assertEquals(0, list.size()); // Empty list should be size zero.
 
-    /**
-     * Helper method used to print the results of a test.
-     * @param expected The expected output.
-     * @param actual The actual output.
-     */
-    public static void printResults(String expected, String actual) {
-        System.out.println("After test:");
-        System.out.println("Expected: " + expected);
-        System.out.println("Actual: " + actual);
-        System.out.println(expected.equals(actual) ? "PASS\n" : "FAIL\n");
+        // Populate the list.
+        list.append(1);
+        list.append(2);
+
+        assertEquals(2, list.size());
+
+        list.removeFirst();
+        assertEquals(1, list.size());
+
+        list.clear();
+        assertEquals(0, list.size());
     }
 
-
-    /**
-     * Overloaded version of {@link #printResults(String, String)}
-     */
-    public static void printResults(Double expected, Double actual) {
-        System.out.println("After test:");
-        System.out.println("Expected: " + expected);
-        System.out.println("Actual: " + actual);
-        System.out.println(expected.equals(actual) ? "PASS\n" : "FAIL\n");
-    }
-
-
-    /**
-     * Overloaded version of {@link #printResults(String, String)}
-     */
-    public static void printResults(boolean expected, boolean actual) {
-        System.out.println("After test:");
-        System.out.println("Expected: " + expected);
-        System.out.println("Actual: " + actual);
-        System.out.println(expected == actual ? "PASS\n" : "FAIL\n");
-    }
-
-
-    /**
-     * Overloaded version of {@link #printResults(String, String)}
-     */
-    public static void printResults(int expected, int actual) {
-        System.out.println("After test:");
-        System.out.println("Expected: " + expected);
-        System.out.println("Actual: " + actual);
-        System.out.println(expected == actual ? "PASS\n" : "FAIL\n");
-    }
 }
