@@ -1,6 +1,7 @@
 package stack;
 
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 
 
 /**
@@ -44,7 +45,7 @@ public class MyStack<E> {
      */
     public E pop() {
         if (isEmpty()) {
-            return null;
+            throw new NoSuchElementException("Stack is empty");
         }
 
         E entry = data[--size];
@@ -61,7 +62,7 @@ public class MyStack<E> {
      */
     public E peek() {
         if (isEmpty()) {
-            return null;
+            throw new NoSuchElementException("Stack is empty");
         }
 
         return data[size - 1];

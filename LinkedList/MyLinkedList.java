@@ -1,3 +1,5 @@
+package linkedList;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Stack;
@@ -158,6 +160,26 @@ public class MyLinkedList<E> implements Iterable<E>{
 
 
     /**
+     * Removes the first element in the list.
+     *
+     * @return The value of the node that was removed.
+     */
+    public E removeFirst() {
+        if (head == null) {
+            throw new NoSuchElementException("List is empty");
+        }
+
+        E value = head.val;
+
+        head = head.next;
+
+        size--;
+
+        return value;
+    }
+
+
+    /**
      * Removes the element from the given index of the list.
      *
      * @param index The index that the value will be removed from.
@@ -169,8 +191,7 @@ public class MyLinkedList<E> implements Iterable<E>{
         }
 
         if (index == 0) {
-            head = head.next;
-            size--;
+            removeFirst();
             return;
         }
 
@@ -248,9 +269,27 @@ public class MyLinkedList<E> implements Iterable<E>{
 
 
     /**
+     * Returns the value of the first node in the list without removing it.
+     *
+     * @return The value of the first node in the list.
+     */
+    public E peekFirst() {
+        if (head == null) {
+            throw new NoSuchElementException("List is empty");
+        }
+
+        return head.val;
+    }
+
+
+    /**
      * Reverses the order of the nodes in the linked list using a stack.
      */
     public void reverse() {
+        if (head == null) {
+            return;
+        }
+
         Stack<Node<E>> stack = new Stack<>();
 
         Node<E> current = head;

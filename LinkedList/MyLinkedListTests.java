@@ -1,4 +1,4 @@
-package LinkedList;
+package linkedList;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;

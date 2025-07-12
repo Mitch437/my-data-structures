@@ -1,12 +1,12 @@
-package Queue;
+package queue;
 
-import LinkedList.MyLinkedList;
+import linkedList.MyLinkedList;
 
 import java.util.Iterator;
 
 /**
  * My implementation on a queue using generics.
- * Follows the classic first-in first-out model.
+ * Follows the classic first-in, first-out model.
  * Uses my implementation of a singly linked list as the backing structure.
  * Implements the Iterable interface to enable the use of enhanced for loops.
  *
@@ -58,7 +58,7 @@ public class MyQueue<T> implements Iterable<T> {
     /**
      * Determines if the queue contains any elements.
      *
-     * @return True is the queue contains no elements, false otherwise.
+     * @return True if the queue contains no elements, false otherwise.
      */
     public boolean isEmpty() {
         return queue.isEmpty();
